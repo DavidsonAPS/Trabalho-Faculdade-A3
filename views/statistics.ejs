@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatísticas - To-Do List</title>
+    <style>
+        body { font-family: Arial,sans-serif; background:#f4f7f6; color:#333; margin:0; padding:0; line-height:1.6;}
+        .container { max-width:900px; margin:20px auto; padding:20px; background:#fff; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.1);}
+        h1,h2,h3 { text-align:center; color:#007bff; margin-bottom:20px;}
+        .alert { padding:10px 15px; border-radius:5px; margin-bottom:20px; text-align:center;}
+        .alert-success { background:#d4edda; color:#155724; border:1px solid #c3e6cb;}
+        .alert-danger { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb;}
+
+        .statistics-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; margin-top:30px;}
+        .stat-card { background:#f0f8ff; border:1px solid #cceeff; border-radius:8px; padding:20px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.05);}
+        .stat-card h3 { color:#0056b3; margin-top:0; font-size:1.3em;}
+        .stat-card .value { font-size:2.5em; font-weight:bold; color:#007bff; margin-top:10px;}
+        .stat-list { list-style:none; padding:0; margin-top:20px; text-align:left;}
+        .stat-list li { background:#f9f9f9; border:1px solid #eee; border-radius:5px; padding:10px 15px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;}
+        .stat-list li strong { color:#444; }
+        .stat-list li span { font-weight:bold; color:#007bff; }
+        .back-button { display:inline-block; padding:10px 20px; background:#6c757d; color:#fff; text-decoration:none; border-radius:5px; margin-bottom:20px;}
+        .back-button:hover { background:#5a6268; }
+        .footer { text-align:center; margin-top:40px; }
+        .logout-btn { padding:10px 20px; background:#007bff; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+        .logout-btn:hover { background:#0056b3; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Estatísticas de Produtividade - <%= user.username %></h1>
+
+    <% if(message){ %><div class="alert alert-success"><%= message %></div><% } %>
+    <% if(error){ %><div class="alert alert-danger"><%= error %></div><% } %>
+
+    <a href="/tasks" class="back-button">Voltar para Tarefas</a>
+
+    <% if(stats){ %>
+        <div class="statistics-grid">
+            <div class="stat-card"><h3>Total de Tarefas</h3><div class="value"><%= stats.total %></div></div>
+            <div class="stat-card"><h3>Tarefas Concluídas</h3><div class="value"><%= stats.completed %></div></div>
+            <div class="stat-card"><h3>Tarefas Pendentes</h3><div class="value"><%= stats.pending %></div></div>
+        </div>
+
+        <div class="stat-card" style="margin-top:30px;">
+            <h3>Tarefas por Categoria</h3>
+            <% if(stats.byCategory && stats.byCategory.length>0){ %>
+                <ul class="stat-list">
+                    <% stats.byCategory.forEach(cat=>{ %>
+                        <li><strong><%= cat.category %>:</strong> <span><%= cat.count %></span></li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>Nenhuma tarefa categorizada encontrada.</p>
+            <% } %>
+        </div>
+
+        <div class="stat-card" style="margin-top:20px;">
+            <h3>Tarefas por Prioridade</h3>
+            <% if(stats.byPriority && stats.byPriority.length>0){ %>
+                <ul class="stat-list">
+                    <% stats.byPriority.forEach(prio=>{ %>
+                        <li><strong><%= prio.priority %>:</strong> <span><%= prio.count %></span></li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>Nenhuma tarefa com prioridade definida encontrada.</p>
+            <% } %>
+        </div>
+    <% } else { %>
+        <p style="text-align:center;">Não foi possível carregar as estatísticas.</p>
+    <% } %>
+
+    <div class="footer">
+        <form action="/auth/logout" method="POST"><button class="logout-btn">Sair</button></form>
+    </div>
+</div>
+</body>
+</html>
